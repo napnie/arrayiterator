@@ -12,7 +12,7 @@ public class ArrayIterator<T> implements Iterator<T>{
 	private T[] array;
 	/** attribute to remember its position in the collection */
 	private int cursor;
-	/** attribute to remember remove() has been call or not  */
+	/** attribute to remember remove() has already been call or not  */
 	private boolean hasRemove;
 	/** attribute to remember most recent element return by next() for remove() */
 	private int previousCursor;
@@ -30,38 +30,37 @@ public class ArrayIterator<T> implements Iterator<T>{
 	/**
 	 * Return the next non-null element in the array.
 	 * @return array element that cursor currently point
-	 * @exception if there are no more elements
+	 * @exception NoSuchElementException if there are no more elements
 	 */
 	public T next(){
-		if ( !hasNext() ){
+		if ( hasNext() ){
+			hasRemove = true;
+			previousCursor = cursor;
+			return array[cursor++];
+		}else{
 			throw new NoSuchElementException();
 		}
-		hasRemove = true;
-		previousCursor = cursor;
-		return array[cursor++];
 	}
 
 	/**
 	 * Check if array has next non-null element.
 	 * Automatically skip non-null elements.
-	 * @return false if element no longer has non-null elements
+	 * @return true if next element is not null , false if array no longer has non-null elements
 	 */
 	public boolean hasNext(){
-		if (array[cursor+1]!=null){
-			return true;
-		}else{
-			if (cursor<array.length){
-				cursor++;
-				hasNext();
+		for (int i = cursor ; i < array.length ; i++){
+			if (array[i]!=null){
+				cursor = i;
+				return true;
 			}
-			return false;
 		}
+		return false;
 	}
-	
+
 	/**
 	 * Remove most element return by next() by setting it to null.
 	 * Can only be call once after a call to next().
-	 * @exception if this method is called without calling next() or called more than once after calling next()
+	 * @exception IllegalStateException if this method is called without calling next() or called more than once after calling next()
 	 */
 	public void remove(){
 		if ( !hasRemove ){
