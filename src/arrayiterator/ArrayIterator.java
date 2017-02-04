@@ -13,7 +13,7 @@ public class ArrayIterator<T> implements Iterator<T>{
 	/** attribute to remember its position in the collection */
 	private int cursor;
 	/** attribute to remember remove() has already been call or not  */
-	private boolean hasRemove;
+	private boolean hadRemove;
 	/** attribute to remember most recent element return by next() for remove() */
 	private int previousCursor;
 
@@ -24,7 +24,7 @@ public class ArrayIterator<T> implements Iterator<T>{
 	public ArrayIterator(T[] array){
 		this.array = array;
 		cursor = 0;
-		hasRemove = false;
+		hadRemove = false;
 	}
 
 	/**
@@ -34,7 +34,6 @@ public class ArrayIterator<T> implements Iterator<T>{
 	 */
 	public T next(){
 		if ( hasNext() ){
-			hasRemove = true;
 			previousCursor = cursor;
 			return array[cursor++];
 		}else{
@@ -63,8 +62,9 @@ public class ArrayIterator<T> implements Iterator<T>{
 	 * @exception IllegalStateException if this method is called without calling next() or called more than once after calling next()
 	 */
 	public void remove(){
-		if ( !hasRemove ){
+		if ( !hadRemove ){
 			array[previousCursor] = null;
+			hadRemove = true;
 		}else{
 			throw new IllegalStateException();
 		}
