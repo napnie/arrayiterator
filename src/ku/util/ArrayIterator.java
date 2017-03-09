@@ -1,4 +1,5 @@
-package arrayiterator;
+package ku.util;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -13,7 +14,9 @@ public class ArrayIterator<T> implements Iterator<T>{
 	/** attribute to remember its position in the collection */
 	private int cursor;
 	/** attribute to remember remove() has already been call or not  */
-	private boolean hadRemove;
+	private boolean legal;
+	/** last element */
+	private int lastCursor;
 
 	/**
 	 * Initialize a  new array iterator with array
@@ -22,7 +25,7 @@ public class ArrayIterator<T> implements Iterator<T>{
 	public ArrayIterator(T[] array){
 		this.array = array;
 		cursor = 0;
-		hadRemove = false;
+		legal = false;
 	}
 
 	/**
@@ -32,7 +35,8 @@ public class ArrayIterator<T> implements Iterator<T>{
 	 */
 	public T next(){
 		if ( hasNext() ){
-			hadRemove = false;
+			legal = true;
+			lastCursor = cursor;
 			return array[cursor++];
 		}else{
 			throw new NoSuchElementException();
@@ -60,9 +64,9 @@ public class ArrayIterator<T> implements Iterator<T>{
 	 * @exception IllegalStateException if this method is called without calling next() or called more than once after calling next()
 	 */
 	public void remove(){
-		if ( !hadRemove ){
-			array[cursor-1] = null;
-			hadRemove = true;
+		if ( legal ){
+			array[lastCursor] = null;
+			legal = false;
 		}else{
 			throw new IllegalStateException();
 		}
